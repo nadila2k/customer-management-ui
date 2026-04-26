@@ -28,11 +28,9 @@ function CustomerListPage() {
           name: c.name,
           nic: c.nicNumber,
           dob: c.dateOfBirth,
-          mobileNumber: c.phoneNumbers && c.phoneNumbers.length > 0 ? c.phoneNumbers[0].mobileNumber : "",
-          addressLine1: c.addresses && c.addresses.length > 0 ? c.addresses[0].addressLine1 : "",
-          addressLine2: c.addresses && c.addresses.length > 0 ? c.addresses[0].addressLine2 : "",
-          city: c.addresses && c.addresses.length > 0 ? c.addresses[0].cityName : "",
-          country: c.addresses && c.addresses.length > 0 ? c.addresses[0].countryName : "",
+          phones: c.phoneNumbers && c.phoneNumbers.length > 0 ? c.phoneNumbers : [{ mobileNumber: "" }],
+          addresses: c.addresses && c.addresses.length > 0 ? c.addresses : [{ addressLine1: "", addressLine2: "", cityName: "", countryName: "" }],
+          relatedCustomers: c.familyMemberIds || []
         }));
 
         setCustomers(mappedItems);

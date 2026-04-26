@@ -9,25 +9,12 @@ export const fetchCustomersPaginated = async (page = 0, size = 10, sortBy = "cre
 };
 
 export const createCustomer = async (customerData) => {
-  // Format payload according to the requirement
   const payload = {
     name: customerData.name,
     dateOfBirth: customerData.dob,
     nicNumber: customerData.nic,
-    phones: [
-      {
-        mobileNumber: customerData.mobileNumber,
-      },
-    ],
-    addresses: [
-      {
-        addressLine1: customerData.addressLine1,
-        addressLine2: customerData.addressLine2,
-        cityName: customerData.city,
-        // The mock success response has countryName, though the payload didn't strictly require it. 
-        countryName: customerData.country,
-      },
-    ],
+    phones: customerData.phones && customerData.phones.length > 0 ? customerData.phones : [{ mobileNumber: "" }],
+    addresses: customerData.addresses && customerData.addresses.length > 0 ? customerData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "", countryName: "" }],
     familyMemberIds: customerData.relatedCustomers || [],
   };
 
@@ -39,19 +26,8 @@ export const updateCustomer = async (id, customerData) => {
     name: customerData.name,
     dateOfBirth: customerData.dob,
     nicNumber: customerData.nic,
-    phones: [
-      {
-        mobileNumber: customerData.mobileNumber,
-      },
-    ],
-    addresses: [
-      {
-        addressLine1: customerData.addressLine1,
-        addressLine2: customerData.addressLine2,
-        cityName: customerData.city,
-        countryName: customerData.country,
-      },
-    ],
+    phones: customerData.phones && customerData.phones.length > 0 ? customerData.phones : [{ mobileNumber: "" }],
+    addresses: customerData.addresses && customerData.addresses.length > 0 ? customerData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "", countryName: "" }],
     familyMemberIds: customerData.relatedCustomers || [],
   };
 
