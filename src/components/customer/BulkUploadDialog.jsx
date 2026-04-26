@@ -11,6 +11,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CircularProgress from "@mui/material/CircularProgress";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import styles from "./BulkUploadDialog.module.css";
+import { toastError, toastSuccess, toastWarning } from "../../utils/toast";
 
 function BulkUploadDialog({ open, onClose }) {
   const [file, setFile] = useState(null);
@@ -42,7 +43,7 @@ function BulkUploadDialog({ open, onClose }) {
 
   async function handleUpload() {
     if (!file) {
-      setError("Please select a file first.");
+      toastWarning("Please select a file first");
       return;
     }
 
@@ -57,24 +58,26 @@ function BulkUploadDialog({ open, onClose }) {
         const jobStatus = response.data.status;
         
         if (jobStatus === "COMPLETED") {
-          setSuccess(`Upload completed successfully! Processed ${response.data.processedRecords} out of ${response.data.totalRecords} records.`);
+          toastSuccess(`Upload completed successfully! Processed ${response.data.processedRecords} out of ${response.data.totalRecords} records.`);
         } else if (jobStatus === "COMPLETED_WITH_ERRORS") {
-          setError(`Upload completed with errors. Processed ${response.data.processedRecords}/${response.data.totalRecords}, Failed: ${response.data.failedRecords}.`);
+          toastWarning(`Upload completed with errors. Processed ${response.data.processedRecords}/${response.data.totalRecords}, Failed: ${response.data.failedRecords}.`);
         } else if (jobStatus === "FAILED") {
-          setError(`Upload failed. ${response.data.errorDetails || ""}`);
+          toastError(`Upload failed. ${response.data.errorDetails || ""}`.trim());
         } else if (jobStatus === "PENDING" || jobStatus === "PROCESSING") {
-          setSuccess(`Upload started and is currently ${jobStatus}. Job ID: ${response.data.jobId}.`);
+          toastSuccess(`Upload started and is currently ${jobStatus}. Job ID: ${response.data.jobId}.`);
         } else {
-          setSuccess(response.message || "File uploaded successfully!");
+          toastSuccess(response.message || "File uploaded successfully!");
         }
         
         setFile(null);
+        setError("");
+        setSuccess("");
         if (fileInputRef.current) fileInputRef.current.value = "";
       } else {
         throw new Error(response?.message || "Failed to upload the file.");
       }
     } catch (err) {
-      setError(err.message || "An error occurred during upload.");
+      toastError(err.message || "An error occurred during upload.");
     } finally {
       setIsUploading(false);
     }

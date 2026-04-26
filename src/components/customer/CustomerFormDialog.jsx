@@ -16,6 +16,7 @@ import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import styles from "./CustomerFormDialog.module.css";
 import { searchCustomers } from "../../api/customerApi";
+import { toastError } from "../../utils/toast";
 
 const EMPTY = { name: "", nic: "", dob: "", phones: [{ mobileNumber: "" }], addresses: [{ addressLine1: "", addressLine2: "", cityName: "" }], relatedCustomers: [] };
 
@@ -170,6 +171,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
         }
       } catch (error) {
         console.error("Search failed", error);
+        toastError("Search failed");
       } finally {
         if (latestSearchRef.current === newInputValue) setLoadingSearch(false);
       }

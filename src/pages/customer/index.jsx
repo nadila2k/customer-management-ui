@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import CustomerTable from "../../components/customer/CustomerTable";
 import { fetchCustomersPaginated, createCustomer, updateCustomer, deleteCustomer } from "../../api/customerApi";
+import { toastError, toastSuccess } from "../../utils/toast";
 
 function CustomerListPage() {
   const [customers, setCustomers] = useState([]);
@@ -37,6 +38,7 @@ function CustomerListPage() {
       }
     } catch (error) {
       console.error("Failed to load customers", error);
+      toastError("Failed to load customers");
     } finally {
       setLoading(false);
     }
@@ -47,10 +49,12 @@ function CustomerListPage() {
       const response = await createCustomer(data);
       if (response && response.status === "SUCCESS") {
         await loadCustomers();
+        toastSuccess("Customer created");
         return { success: true };
       }
     } catch (error) {
       console.error("Failed to create customer", error);
+      toastError("Failed to create customer");
       return { success: false, error: error };
     }
   }
@@ -60,10 +64,12 @@ function CustomerListPage() {
       const response = await updateCustomer(updated.id, updated);
       if (response && response.status === "SUCCESS") {
         await loadCustomers();
+        toastSuccess("Customer updated");
         return { success: true };
       }
     } catch (error) {
       console.error("Failed to update customer", error);
+      toastError("Failed to update customer");
       return { success: false, error: error };
     }
   }
@@ -72,8 +78,10 @@ function CustomerListPage() {
     try {
       await deleteCustomer(id);
       await loadCustomers();
+      toastSuccess("Customer deleted");
     } catch (error) {
       console.error("Failed to delete customer", error);
+      toastError("Failed to delete customer");
     }
   }
 
