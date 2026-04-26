@@ -15,6 +15,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Tooltip from "@mui/material/Tooltip";
 import AddIcon from "@mui/icons-material/Add";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import SearchIcon from "@mui/icons-material/Search";
@@ -48,6 +49,7 @@ function CustomerTable({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
+  const [dialogMode, setDialogMode] = useState("create"); // create | edit | view
 
   const displayRows = rows.filter(
     (r) =>
@@ -57,7 +59,36 @@ function CustomerTable({
 
   function handleAddClick() {
     setEditTarget(null);
+    setDialogMode("create");
     setDialogOpen(true);
+  }
+
+  async function handleViewClick(row) {
+    try {
+      const res = await fetchCustomerById(row.id);
+      if (res && res.status === "SUCCESS" && res.data) {
+        const c = res.data;
+        const mapped = {
+          id: c.id,
+          name: c.name,
+          nic: c.nicNumber,
+          dob: c.dateOfBirth,
+          phones: c.phoneNumbers && c.phoneNumbers.length > 0 ? c.phoneNumbers : [{ mobileNumber: "" }],
+          addresses: c.addresses && c.addresses.length > 0 ? c.addresses : [{ addressLine1: "", addressLine2: "", cityName: "" }],
+          relatedCustomers: (c.familyMembers || []).map((m) => m.id),
+          familyMembers: c.familyMembers || [],
+        };
+        setEditTarget(mapped);
+      } else {
+        setEditTarget(row);
+      }
+    } catch (e) {
+      console.error("Failed to load customer for view", e);
+      setEditTarget(row);
+    } finally {
+      setDialogMode("view");
+      setDialogOpen(true);
+    }
   }
 
   async function handleEditClick(row) {
@@ -83,6 +114,7 @@ function CustomerTable({
       console.error("Failed to load customer for edit", e);
       setEditTarget(row);
     } finally {
+      setDialogMode("edit");
       setDialogOpen(true);
     }
   }
@@ -90,6 +122,7 @@ function CustomerTable({
   function handleDialogClose() {
     setDialogOpen(false);
     setEditTarget(null);
+    setDialogMode("create");
   }
 
   async function handleDialogSubmit(data) {
@@ -212,6 +245,15 @@ function CustomerTable({
                             <EditOutlinedIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
+                        <Tooltip title="View">
+                          <IconButton
+                            size="small"
+                            className={styles.editBtn}
+                            onClick={() => handleViewClick(row)}
+                          >
+                            <VisibilityOutlinedIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
                         <Tooltip title="Delete">
                           <IconButton
                             size="small"
@@ -246,9 +288,10 @@ function CustomerTable({
       <CustomerFormDialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        onSubmit={handleDialogSubmit}
+        onSubmit={dialogMode === "view" ? undefined : handleDialogSubmit}
         initialData={editTarget}
         allCustomers={rows}
+        readOnly={dialogMode === "view"}
       />
 
       {/* Bulk Upload Dialog */}

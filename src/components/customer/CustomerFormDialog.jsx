@@ -20,7 +20,7 @@ import { toastError } from "../../utils/toast";
 
 const EMPTY = { name: "", nic: "", dob: "", phones: [{ mobileNumber: "" }], addresses: [{ addressLine1: "", addressLine2: "", cityName: "" }], relatedCustomers: [] };
 
-function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers = [] }) {
+function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers = [], readOnly = false }) {
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -30,6 +30,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
   const debounceTimeout = useRef(null);
   const latestSearchRef = useRef("");
   const isEdit = Boolean(initialData);
+  const isView = Boolean(readOnly);
 
   useEffect(() => {
     if (open) {
@@ -118,6 +119,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
   }
 
   async function handleSubmit() {
+    if (isView) return;
     const validation = validate();
     if (Object.keys(validation).length > 0) {
       setErrors(validation);
@@ -203,7 +205,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle className={styles.dialogTitle}>
         <Typography className={styles.titleText}>
-          {isEdit ? "Edit Customer" : "New Customer"}
+          {isView ? "View Customer" : (isEdit ? "Edit Customer" : "New Customer")}
         </Typography>
         <IconButton size="small" onClick={onClose}>
           <CloseIcon fontSize="small" />
@@ -223,6 +225,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               fullWidth
               size="small"
               autoFocus
+              disabled={isView}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -236,6 +239,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               fullWidth
               size="small"
               placeholder="123456789V"
+              disabled={isView}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -250,6 +254,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               fullWidth
               size="small"
               InputLabelProps={{ shrink: true }}
+              disabled={isView}
             />
           </Grid>
           <Grid item xs={12}>
@@ -271,6 +276,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               onInputChange={handleSearchChange}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               sx={{ width: 500 }}
+              disabled={isView}
               renderInput={(params) => (
                 <TextField {...params} label="Related Customers" placeholder="Search customer..." size="small" />
               )}
@@ -282,9 +288,11 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
         
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} sx={{display: "flex", alignItems: "center"}}>
           <Typography variant="subtitle1" fontWeight="bold">Phone Numbers</Typography>
-          <IconButton onClick={addPhone} color="primary" size="small">
-            <AddIcon />
-          </IconButton>
+          {!isView && (
+            <IconButton onClick={addPhone} color="primary" size="small">
+              <AddIcon />
+            </IconButton>
+          )}
         </Box>
         
         {form.phones.map((phone, index) => (
@@ -298,10 +306,13 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               size="small"
               placeholder="e.g. +91991234562"
               sx={{ width: 260 }}
+              disabled={isView}
             />
-            <IconButton onClick={() => removePhone(index)} color="error" size="small">
-              <DeleteIcon />
-            </IconButton>
+            {!isView && (
+              <IconButton onClick={() => removePhone(index)} color="error" size="small">
+                <DeleteIcon />
+              </IconButton>
+            )}
           </Box>
         ))}
 
@@ -309,18 +320,22 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
 
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} sx={{display: "flex", alignItems: "center"}}>
           <Typography variant="subtitle1" fontWeight="bold">Addresses</Typography>
-          <IconButton onClick={addAddress} color="primary" size="small">
-            <AddIcon />
-          </IconButton>
+          {!isView && (
+            <IconButton onClick={addAddress} color="primary" size="small">
+              <AddIcon />
+            </IconButton>
+          )}
         </Box>
 
         {form.addresses.map((address, index) => (
           <Box key={index} p={2} mb={4} border={1} borderColor="grey.300" borderRadius={2}>
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={2} sx={{display: "flex", alignItems: "center", mb: 2}}>
               <Typography variant="subtitle2">Address {index + 1}</Typography>
-              <IconButton onClick={() => removeAddress(index)} color="error" size="small">
-                <DeleteIcon />
-              </IconButton>
+              {!isView && (
+                <IconButton onClick={() => removeAddress(index)} color="error" size="small">
+                  <DeleteIcon />
+                </IconButton>
+              )}
             </Box>
 
             <Box display="flex" alignItems="flex-start" gap={2} flexWrap="wrap" sx={{display: "flex", gap: 2}}>
@@ -332,6 +347,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
                 helperText={errors[`addresses.${index}.addressLine1`] || ""}
                 size="small"
                 sx={{ width: 260 }}
+                disabled={isView}
               />
               <TextField
                 label="Address Line 2"
@@ -341,6 +357,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
                 helperText={errors[`addresses.${index}.addressLine2`] || ""}
                 size="small"
                 sx={{ width: 260 }}
+                disabled={isView}
               />
               <TextField
                 label="City"
@@ -350,6 +367,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
                 helperText={errors[`addresses.${index}.cityName`] || ""}
                 size="small"
                 sx={{ width: 200 }}
+                disabled={isView}
               />
             </Box>
           </Box>
@@ -359,11 +377,13 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
 
       <DialogActions className={styles.dialogActions}>
         <Button variant="outlined" onClick={onClose} className={styles.cancelBtn} disabled={submitting}>
-          Cancel
+          {isView ? "Close" : "Cancel"}
         </Button>
-        <Button variant="contained" onClick={handleSubmit} className={styles.submitBtn} disabled={submitting}>
-          {submitting ? "Saving..." : (isEdit ? "Save Changes" : "Create")}
-        </Button>
+        {!isView && (
+          <Button variant="contained" onClick={handleSubmit} className={styles.submitBtn} disabled={submitting}>
+            {submitting ? "Saving..." : (isEdit ? "Save Changes" : "Create")}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
