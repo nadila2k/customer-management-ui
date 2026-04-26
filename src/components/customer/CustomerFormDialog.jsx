@@ -134,7 +134,12 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
         if (serverErr.data.nicNumber) newErrors.nic = serverErr.data.nicNumber;
         if (serverErr.data.dateOfBirth) newErrors.dob = serverErr.data.dateOfBirth;
         if (serverErr.data.name) newErrors.name = serverErr.data.name;
-        // error handling for phones and addresses might be complex based on API. Just generic error display for now
+        for (const [k, v] of Object.entries(serverErr.data)) {
+          const msg = typeof v === "string" ? v : "";
+          if (!msg) continue;
+          const normalizedKey = k.replace(/\[(\d+)\]/g, ".$1");
+          newErrors[normalizedKey] = msg;
+        }
         setErrors(newErrors);
       }
     }
@@ -286,15 +291,15 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               label={`Mobile Number ${index + 1}`}
               value={phone.mobileNumber}
               onChange={(e) => handlePhoneChange(index, e.target.value)}
+              error={Boolean(errors[`phones.${index}.mobileNumber`])}
+              helperText={errors[`phones.${index}.mobileNumber`] || ""}
               fullWidth
               size="small"
               placeholder="e.g. +91991234562"
             />
-            {form.phones.length > 1 && (
-              <IconButton onClick={() => removePhone(index)} color="error" size="small">
-                <DeleteIcon />
-              </IconButton>
-            )}
+            <IconButton onClick={() => removePhone(index)} color="error" size="small">
+              <DeleteIcon />
+            </IconButton>
           </Box>
         ))}
 
@@ -309,16 +314,14 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
 
         {form.addresses.map((address, index) => (
           <Box key={index} p={2} mb={2} border={1} borderColor="grey.300" borderRadius={2} position="relative">
-            {form.addresses.length > 1 && (
-              <IconButton 
-                onClick={() => removeAddress(index)} 
-                color="error" 
-                size="small" 
-                sx={{ position: "absolute", top: 8, right: 8 }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            )}
+            <IconButton 
+              onClick={() => removeAddress(index)} 
+              color="error" 
+              size="small" 
+              sx={{ position: "absolute", top: 8, right: 8 }}
+            >
+              <DeleteIcon />
+            </IconButton>
             <Typography variant="subtitle2" mb={1}>Address {index + 1}</Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -326,6 +329,8 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
                   label="Address Line 1"
                   value={address.addressLine1}
                   onChange={(e) => handleAddressChange(index, "addressLine1", e.target.value)}
+                  error={Boolean(errors[`addresses.${index}.addressLine1`])}
+                  helperText={errors[`addresses.${index}.addressLine1`] || ""}
                   fullWidth
                   size="small"
                 />
@@ -335,6 +340,8 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
                   label="Address Line 2"
                   value={address.addressLine2}
                   onChange={(e) => handleAddressChange(index, "addressLine2", e.target.value)}
+                  error={Boolean(errors[`addresses.${index}.addressLine2`])}
+                  helperText={errors[`addresses.${index}.addressLine2`] || ""}
                   fullWidth
                   size="small"
                 />
@@ -344,6 +351,8 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
                   label="City"
                   value={address.cityName}
                   onChange={(e) => handleAddressChange(index, "cityName", e.target.value)}
+                  error={Boolean(errors[`addresses.${index}.cityName`])}
+                  helperText={errors[`addresses.${index}.cityName`] || ""}
                   fullWidth
                   size="small"
                 />

@@ -8,13 +8,33 @@ export const fetchCustomersPaginated = async (page = 0, size = 10, sortBy = "cre
   return await get(`/customers/paginated?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}`);
 };
 
+const normalizePhones = (phones) => {
+  const list = Array.isArray(phones) ? phones : [];
+  const cleaned = list
+    .map((p) => ({ mobileNumber: (p?.mobileNumber || "").trim() }))
+    .filter((p) => p.mobileNumber.length > 0);
+  return cleaned;
+};
+
+const normalizeAddresses = (addresses) => {
+  const list = Array.isArray(addresses) ? addresses : [];
+  const cleaned = list
+    .map((a) => ({
+      addressLine1: (a?.addressLine1 || "").trim(),
+      addressLine2: a?.addressLine2 == null ? "" : String(a.addressLine2).trim(),
+      cityName: (a?.cityName || "").trim(),
+    }))
+    .filter((a) => a.addressLine1 || a.addressLine2 || a.cityName);
+  return cleaned;
+};
+
 export const createCustomer = async (customerData) => {
   const payload = {
     name: customerData.name,
     dateOfBirth: customerData.dob,
     nicNumber: customerData.nic,
-    phones: customerData.phones && customerData.phones.length > 0 ? customerData.phones : [{ mobileNumber: "" }],
-    addresses: customerData.addresses && customerData.addresses.length > 0 ? customerData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "" }],
+    phones: normalizePhones(customerData.phones),
+    addresses: normalizeAddresses(customerData.addresses),
     familyMemberIds: customerData.relatedCustomers || [],
   };
 
@@ -26,8 +46,8 @@ export const updateCustomer = async (id, customerData) => {
     name: customerData.name,
     dateOfBirth: customerData.dob,
     nicNumber: customerData.nic,
-    phones: customerData.phones && customerData.phones.length > 0 ? customerData.phones : [{ mobileNumber: "" }],
-    addresses: customerData.addresses && customerData.addresses.length > 0 ? customerData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "" }],
+    phones: normalizePhones(customerData.phones),
+    addresses: normalizeAddresses(customerData.addresses),
     familyMemberIds: customerData.relatedCustomers || [],
   };
 
