@@ -250,7 +250,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12}>
             <Autocomplete
               multiple
               options={relatedOptions}
@@ -268,17 +268,17 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               inputValue={searchInput}
               onInputChange={handleSearchChange}
               isOptionEqualToValue={(option, value) => option.id === value.id}
+              sx={{ width: 500 }}
               renderInput={(params) => (
                 <TextField {...params} label="Related Customers" placeholder="Search customer..." size="small" />
               )}
-              fullWidth
             />
           </Grid>
         </Grid>
 
         <Divider sx={{ my: 2 }} />
         
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} sx={{display: "flex", alignItems: "center"}}>
           <Typography variant="subtitle1" fontWeight="bold">Phone Numbers</Typography>
           <IconButton onClick={addPhone} color="primary" size="small">
             <AddIcon />
@@ -286,16 +286,16 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
         </Box>
         
         {form.phones.map((phone, index) => (
-          <Box key={index} display="flex" alignItems="center" gap={2} mb={2}>
+          <Box key={index} display="flex" alignItems="center" gap={2} mb={2} >
             <TextField
               label={`Mobile Number ${index + 1}`}
               value={phone.mobileNumber}
               onChange={(e) => handlePhoneChange(index, e.target.value)}
               error={Boolean(errors[`phones.${index}.mobileNumber`])}
               helperText={errors[`phones.${index}.mobileNumber`] || ""}
-              fullWidth
               size="small"
               placeholder="e.g. +91991234562"
+              sx={{ width: 260 }}
             />
             <IconButton onClick={() => removePhone(index)} color="error" size="small">
               <DeleteIcon />
@@ -305,7 +305,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
 
         <Divider sx={{ my: 2 }} />
 
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} sx={{display: "flex", alignItems: "center"}}>
           <Typography variant="subtitle1" fontWeight="bold">Addresses</Typography>
           <IconButton onClick={addAddress} color="primary" size="small">
             <AddIcon />
@@ -313,52 +313,43 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
         </Box>
 
         {form.addresses.map((address, index) => (
-          <Box key={index} p={2} mb={2} border={1} borderColor="grey.300" borderRadius={2} position="relative">
-            <IconButton 
-              onClick={() => removeAddress(index)} 
-              color="error" 
-              size="small" 
-              sx={{ position: "absolute", top: 8, right: 8 }}
-            >
-              <DeleteIcon />
-            </IconButton>
-            <Typography variant="subtitle2" mb={1}>Address {index + 1}</Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Address Line 1"
-                  value={address.addressLine1}
-                  onChange={(e) => handleAddressChange(index, "addressLine1", e.target.value)}
-                  error={Boolean(errors[`addresses.${index}.addressLine1`])}
-                  helperText={errors[`addresses.${index}.addressLine1`] || ""}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Address Line 2"
-                  value={address.addressLine2}
-                  onChange={(e) => handleAddressChange(index, "addressLine2", e.target.value)}
-                  error={Boolean(errors[`addresses.${index}.addressLine2`])}
-                  helperText={errors[`addresses.${index}.addressLine2`] || ""}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="City"
-                  value={address.cityName}
-                  onChange={(e) => handleAddressChange(index, "cityName", e.target.value)}
-                  error={Boolean(errors[`addresses.${index}.cityName`])}
-                  helperText={errors[`addresses.${index}.cityName`] || ""}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
+          <Box key={index} p={2} mb={4} border={1} borderColor="grey.300" borderRadius={2}>
+            <Box display="flex" alignItems="center" justifyContent="space-between" mb={2} sx={{display: "flex", alignItems: "center", mb: 2}}>
+              <Typography variant="subtitle2">Address {index + 1}</Typography>
+              <IconButton onClick={() => removeAddress(index)} color="error" size="small">
+                <DeleteIcon />
+              </IconButton>
+            </Box>
 
-            </Grid>
+            <Box display="flex" alignItems="flex-start" gap={2} flexWrap="wrap" sx={{display: "flex", gap: 2}}>
+              <TextField
+                label="Address Line 1"
+                value={address.addressLine1}
+                onChange={(e) => handleAddressChange(index, "addressLine1", e.target.value)}
+                error={Boolean(errors[`addresses.${index}.addressLine1`])}
+                helperText={errors[`addresses.${index}.addressLine1`] || ""}
+                size="small"
+                sx={{ width: 260 }}
+              />
+              <TextField
+                label="Address Line 2"
+                value={address.addressLine2}
+                onChange={(e) => handleAddressChange(index, "addressLine2", e.target.value)}
+                error={Boolean(errors[`addresses.${index}.addressLine2`])}
+                helperText={errors[`addresses.${index}.addressLine2`] || ""}
+                size="small"
+                sx={{ width: 260 }}
+              />
+              <TextField
+                label="City"
+                value={address.cityName}
+                onChange={(e) => handleAddressChange(index, "cityName", e.target.value)}
+                error={Boolean(errors[`addresses.${index}.cityName`])}
+                helperText={errors[`addresses.${index}.cityName`] || ""}
+                size="small"
+                sx={{ width: 200 }}
+              />
+            </Box>
           </Box>
         ))}
 
