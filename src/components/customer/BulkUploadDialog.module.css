@@ -51,6 +51,82 @@
   margin-top: 8px;
 }
 
+.templateRow {
+  margin-top: 10px;
+}
+
+.templateLink {
+  font-size: 0.875rem;
+  color: #1976d2;
+  text-decoration: underline;
+}
+
+.templateLink:hover {
+  color: #1565c0;
+}
+
+.resultPanel {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  background: #ffffff;
+}
+
+.resultAlert {
+  margin-bottom: 10px;
+}
+
+.resultHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resultTitle {
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+.resultSub {
+  font-size: 0.875rem !important;
+  color: #374151 !important;
+}
+
+.chipRow {
+  margin: 4px 0 8px 0;
+}
+
+.errorList {
+  margin-top: 8px;
+}
+
+.errorListTitle {
+  font-weight: 700 !important;
+  color: #111827 !important;
+  font-size: 0.9rem !important;
+  margin-bottom: 6px !important;
+}
+
+.errorUl {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.errorLi {
+  margin: 4px 0;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.errorRow {
+  font-weight: 700;
+  color: #111827;
+}
+
+.errorMsg {
+  color: #374151;
+}
+
 .cancelBtn {
   color: #6b7280 !important;
   border-color: #e5e7eb !important;

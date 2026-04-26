@@ -1,0 +1,4 @@
+name,nicNumber,dateOfBirth,phoneNumbers,addressLine1s,addressLine2s,cityNames,familyMemberIds
+John Doe,NIC0001LK,2000-12-31,"0771234567|0719876543","No 12, Galle Road|No 55, Main Street","Colombo 03|","Colombo|Kandy","1|2"
+Jane Smith,NIC0002LK,1995-05-10,"0765554444","Apartment 7, Lake View","Floor 2","Colombo",""
+
