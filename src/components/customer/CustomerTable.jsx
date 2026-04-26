@@ -43,7 +43,9 @@ function CustomerTable({
   onAdd, 
   onEdit, 
   onDelete,
-  loading 
+  loading,
+  globalTotal,
+  onReload
 }) {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -148,7 +150,7 @@ function CustomerTable({
         <div className={styles.titleSection}>
           <Typography className={styles.pageTitle}>Customers</Typography>
           <Typography className={styles.pageSubtitle}>
-            {rows.length} total customer{rows.length !== 1 ? "s" : ""}
+            {globalTotal ?? 0} total customer{(globalTotal ?? 0) !== 1 ? "s" : ""}
           </Typography>
         </div>
         <div className={styles.actionButtons}>
@@ -300,6 +302,7 @@ function CustomerTable({
       <BulkUploadDialog
         open={bulkUploadOpen}
         onClose={() => setBulkUploadOpen(false)}
+        onReload={onReload}
       />
     </>
   );

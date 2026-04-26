@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import CustomerTable from "../../components/customer/CustomerTable";
-import { fetchCustomersPaginated, createCustomer, updateCustomer, deleteCustomer } from "../../api/customerApi";
+import { fetchCustomersPaginated, fetchCustomerCount, createCustomer, updateCustomer, deleteCustomer } from "../../api/customerApi";
 import { toastError, toastSuccess } from "../../utils/toast";
 
 function CustomerListPage() {
@@ -9,10 +9,23 @@ function CustomerListPage() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalElements, setTotalElements] = useState(0);
+  const [globalTotal, setGlobalTotal] = useState(0);
 
   useEffect(() => {
     loadCustomers();
+    loadGlobalTotal();
   }, [page, rowsPerPage]);
+
+  const loadGlobalTotal = async () => {
+    try {
+      const response = await fetchCustomerCount();
+      if (response && response.status === "SUCCESS") {
+        setGlobalTotal(response.data);
+      }
+    } catch (error) {
+      console.error("Failed to load global customer count", error);
+    }
+  };
 
   const loadCustomers = async () => {
     try {
@@ -44,11 +57,17 @@ function CustomerListPage() {
     }
   };
 
+  async function handleReload() {
+    await loadCustomers();
+    await loadGlobalTotal();
+  }
+
   async function handleAdd(data) {
     try {
       const response = await createCustomer(data);
       if (response && response.status === "SUCCESS") {
         await loadCustomers();
+        await loadGlobalTotal();
         toastSuccess("Customer created");
         return { success: true };
       }
@@ -78,6 +97,7 @@ function CustomerListPage() {
     try {
       await deleteCustomer(id);
       await loadCustomers();
+      await loadGlobalTotal();
       toastSuccess("Customer deleted");
     } catch (error) {
       console.error("Failed to delete customer", error);
@@ -100,6 +120,8 @@ function CustomerListPage() {
       onEdit={handleEdit}
       onDelete={handleDelete}
       loading={loading}
+      globalTotal={globalTotal}
+      onReload={handleReload}
     />
   );
 }

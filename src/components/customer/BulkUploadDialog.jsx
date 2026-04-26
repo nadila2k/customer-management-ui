@@ -16,7 +16,7 @@ import Stack from "@mui/material/Stack";
 import styles from "./BulkUploadDialog.module.css";
 import { toastError, toastSuccess, toastWarning } from "../../utils/toast";
 
-function BulkUploadDialog({ open, onClose }) {
+function BulkUploadDialog({ open, onClose, onReload }) {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
@@ -117,6 +117,10 @@ function BulkUploadDialog({ open, onClose }) {
           toastSuccess(response.message || "File uploaded successfully!");
         }
         
+        if (jobStatus !== "FAILED") {
+          onReload?.();
+        }
+        
         setFile(null);
         setError("");
         setSuccess("");
@@ -150,11 +154,7 @@ function BulkUploadDialog({ open, onClose }) {
             Supports .csv, .xlsx
           </Typography>
 
-          <div className={styles.templateRow} onClick={(e) => e.stopPropagation()}>
-            <a className={styles.templateLink} href="/sample-customers.csv" download>
-              Download sample CSV template
-            </a>
-          </div>
+
           
           {file && (
             <Typography className={styles.fileName}>

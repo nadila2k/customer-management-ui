@@ -8,6 +8,11 @@ export const fetchCustomersPaginated = async (page = 0, size = 10, sortBy = "cre
   return await get(`/customers/paginated?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}`);
 };
 
+export const fetchCustomerCount = async () => {
+  return await get("/customers/count");
+};
+
+
 const normalizePhones = (phones) => {
   const list = Array.isArray(phones) ? phones : [];
   const cleaned = list
