@@ -1,7 +1,16 @@
-import React from 'react'
+import { Outlet } from "react-router-dom";
+import MainAppBar from "./MainAppBar";
+import styles from "./MainLayout.module.css";
 
-export default function MainLayout() {
+const MainLayout = () => {
   return (
-    <div>MainLayout</div>
-  )
-}
+    <div className={styles.root}>
+      <MainAppBar />
+      <main className={styles.main}>
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+
+export default MainLayout;

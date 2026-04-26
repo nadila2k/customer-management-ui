@@ -1,0 +1,36 @@
+.appBar {
+  background-color: #ffffff !important;
+  color: #1a1a2e !important;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.toolbar {
+  min-height: 64px !important;
+  padding: 0 24px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logoSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoIcon {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoText {
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  color: #1a1a2e;
+  letter-spacing: -0.02em;
+}
