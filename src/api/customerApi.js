@@ -37,3 +37,12 @@ export const updateCustomer = async (id, customerData) => {
 export const deleteCustomer = async (id) => {
   return await del(`/customers/${id}`);
 };
+export const uploadBulkCustomers = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return await post("/customers/bulk/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};

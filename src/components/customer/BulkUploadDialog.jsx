@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { uploadBulkCustomers } from "../../api/customerApi";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -50,32 +51,28 @@ function BulkUploadDialog({ open, onClose }) {
     setSuccess("");
 
     try {
-      // Create FormData to send the file
-      const formData = new FormData();
-      formData.append("file", file);
+      const response = await uploadBulkCustomers(file);
 
-      // We'll mock the endpoint for now. If you have a real one, replace this URL.
-      // const response = await fetch("/api/customers/bulk-upload", {
-      //   method: "POST",
-      //   body: formData,
-      // });
-      
-      // if (!response.ok) {
-      //   throw new Error("Failed to upload the file.");
-      // }
-
-      // Simulating a network request delay
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // Simulate an error randomly to test error handling (10% chance)
-          // if (Math.random() < 0.1) reject(new Error("Network error"));
-          resolve();
-        }, 1500);
-      });
-
-      setSuccess("File uploaded successfully!");
-      setFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      if (response && response.status === "SUCCESS" && response.data) {
+        const jobStatus = response.data.status;
+        
+        if (jobStatus === "COMPLETED") {
+          setSuccess(`Upload completed successfully! Processed ${response.data.processedRecords} out of ${response.data.totalRecords} records.`);
+        } else if (jobStatus === "COMPLETED_WITH_ERRORS") {
+          setError(`Upload completed with errors. Processed ${response.data.processedRecords}/${response.data.totalRecords}, Failed: ${response.data.failedRecords}.`);
+        } else if (jobStatus === "FAILED") {
+          setError(`Upload failed. ${response.data.errorDetails || ""}`);
+        } else if (jobStatus === "PENDING" || jobStatus === "PROCESSING") {
+          setSuccess(`Upload started and is currently ${jobStatus}. Job ID: ${response.data.jobId}.`);
+        } else {
+          setSuccess(response.message || "File uploaded successfully!");
+        }
+        
+        setFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      } else {
+        throw new Error(response?.message || "Failed to upload the file.");
+      }
     } catch (err) {
       setError(err.message || "An error occurred during upload.");
     } finally {
