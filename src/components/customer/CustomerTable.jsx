@@ -31,23 +31,27 @@ const COLUMNS = [
   { id: "actions", label: "Actions", width: 100, align: "center" },
 ];
 
-function CustomerTable({ rows = [], onAdd, onEdit, onDelete }) {
+function CustomerTable({ 
+  rows = [], 
+  totalElements = 0,
+  page = 0,
+  rowsPerPage = 10,
+  onPageChange,
+  onRowsPerPageChange,
+  onAdd, 
+  onEdit, 
+  onDelete,
+  loading 
+}) {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const filtered = rows.filter(
+  const displayRows = rows.filter(
     (r) =>
       r.name.toLowerCase().includes(search.toLowerCase()) ||
       r.nic.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const paginatedRows = filtered.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
   );
 
   function handleAddClick() {
@@ -120,7 +124,7 @@ function CustomerTable({ rows = [], onAdd, onEdit, onDelete }) {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setPage(0);
+            if (onPageChange) onPageChange(0);
           }}
           InputProps={{
             startAdornment: (
@@ -150,7 +154,7 @@ function CustomerTable({ rows = [], onAdd, onEdit, onDelete }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filtered.length === 0 ? (
+              {displayRows.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className={styles.emptyRow}>
                     <PeopleAltOutlinedIcon className={styles.emptyIcon} />
@@ -160,7 +164,7 @@ function CustomerTable({ rows = [], onAdd, onEdit, onDelete }) {
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedRows.map((row) => (
+                displayRows.map((row) => (
                   <TableRow key={row.id} hover>
                     <TableCell>
                       <span className={styles.idCell}>#{row.id}</span>
@@ -205,13 +209,12 @@ function CustomerTable({ rows = [], onAdd, onEdit, onDelete }) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={filtered.length}
+          count={totalElements}
           rowsPerPage={rowsPerPage}
           page={page}
-          onPageChange={(e, newPage) => setPage(newPage)}
+          onPageChange={(e, newPage) => onPageChange?.(newPage)}
           onRowsPerPageChange={(e) => {
-            setRowsPerPage(parseInt(e.target.value, 10));
-            setPage(0);
+            onRowsPerPageChange?.(parseInt(e.target.value, 10));
           }}
         />
       </Paper>

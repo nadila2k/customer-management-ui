@@ -4,6 +4,10 @@ export const fetchCustomers = async () => {
   return await get("/customers");
 };
 
+export const fetchCustomersPaginated = async (page = 0, size = 10, sortBy = "createdAt", sortDirection = "asc") => {
+  return await get(`/customers/paginated?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}`);
+};
+
 export const createCustomer = async (customerData) => {
   // Format payload according to the requirement
   const payload = {

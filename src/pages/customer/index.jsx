@@ -1,23 +1,26 @@
 import { useState, useEffect } from "react";
 import CustomerTable from "../../components/customer/CustomerTable";
-import { fetchCustomers, createCustomer, updateCustomer, deleteCustomer } from "../../api/customerApi";
+import { fetchCustomersPaginated, createCustomer, updateCustomer, deleteCustomer } from "../../api/customerApi";
 
 function CustomerListPage() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalElements, setTotalElements] = useState(0);
 
   useEffect(() => {
     loadCustomers();
-  }, []);
+  }, [page, rowsPerPage]);
 
   const loadCustomers = async () => {
     try {
       setLoading(true);
-      const response = await fetchCustomers();
+      const response = await fetchCustomersPaginated(page, rowsPerPage);
       if (response && response.data) {
-        // The success format looks like { status: 'SUCCESS', data: [...] }
-        // or for a list maybe just a list or an object with 'data'. Let's assume response.data contains the list if it's an object.
-        const items = Array.isArray(response.data) ? response.data : Array.isArray(response) ? response : [];
+        // Server side paginated response expects response.data.content
+        const items = response.data.content || [];
+        setTotalElements(response.data.totalElements || 0);
         
         // Map backend properties to frontend
         const mappedItems = items.map(c => ({
@@ -79,6 +82,14 @@ function CustomerListPage() {
   return (
     <CustomerTable
       rows={customers}
+      totalElements={totalElements}
+      page={page}
+      rowsPerPage={rowsPerPage}
+      onPageChange={(newPage) => setPage(newPage)}
+      onRowsPerPageChange={(newRowsPerPage) => {
+        setRowsPerPage(newRowsPerPage);
+        setPage(0);
+      }}
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
