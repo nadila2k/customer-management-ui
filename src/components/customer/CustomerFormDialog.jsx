@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -15,6 +15,7 @@ import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import styles from "./CustomerFormDialog.module.css";
+import { searchCustomers } from "../../api/customerApi";
 
 const EMPTY = { name: "", nic: "", dob: "", phones: [{ mobileNumber: "" }], addresses: [{ addressLine1: "", addressLine2: "", cityName: "" }], relatedCustomers: [] };
 
@@ -22,10 +23,16 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const [searchOptions, setSearchOptions] = useState([]);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const debounceTimeout = useRef(null);
+  const latestSearchRef = useRef("");
   const isEdit = Boolean(initialData);
 
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm(initialData ? { 
         name: initialData.name, 
         nic: initialData.nic, 
@@ -37,6 +44,24 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
       setErrors({});
     }
   }, [open, initialData]);
+
+  useEffect(() => {
+    if (!open) return;
+    const selected = allCustomers.filter((c) => form.relatedCustomers.includes(c.id));
+    if (selected.length === 0) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSearchOptions((prev) => {
+      const byId = new Map(prev.map((c) => [c.id, c]));
+      for (const c of selected) byId.set(c.id, c);
+      return Array.from(byId.values());
+    });
+  }, [open, allCustomers, form.relatedCustomers]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    };
+  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -108,6 +133,58 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
     }
   }
 
+  // Replace the handleSearchChange function:
+  const handleSearchChange = (event, newInputValue, reason) => {
+    if (reason !== "input") return;
+
+    setSearchInput(newInputValue || "");
+  
+    // Don't clear existing searchOptions when input is cleared —
+    // selected items may only exist there, not in allCustomers
+    if (!newInputValue) return;
+  
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+  
+    debounceTimeout.current = setTimeout(async () => {
+      setLoadingSearch(true);
+      latestSearchRef.current = newInputValue;
+      try {
+        const res = await searchCustomers(newInputValue);
+        // Ignore out-of-order responses (fast typing)
+        if (latestSearchRef.current !== newInputValue) return;
+
+        if (res && res.status === "SUCCESS" && res.data) {
+          setSearchOptions(res.data);
+        }
+      } catch (error) {
+        console.error("Search failed", error);
+      } finally {
+        if (latestSearchRef.current === newInputValue) setLoadingSearch(false);
+      }
+    }, 500);
+  };
+
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
+  const relatedOptions = useMemo(() => {
+    const byId = new Map();
+    const add = (c) => {
+      if (!c || c.id == null) return;
+      if (initialData?.id != null && c.id === initialData.id) return;
+      byId.set(c.id, c);
+    };
+    for (const c of searchOptions) add(c);
+    const selectedIds = new Set(form.relatedCustomers);
+    for (const c of allCustomers) {
+      if (selectedIds.has(c.id)) add(c);
+    }
+    return Array.from(byId.values());
+  }, [searchOptions, allCustomers, initialData?.id, form.relatedCustomers]);
+
+  const selectedRelatedCustomers = useMemo(() => {
+    const selectedIds = new Set(form.relatedCustomers);
+    return relatedOptions.filter((c) => selectedIds.has(c.id));
+  }, [form.relatedCustomers, relatedOptions]);
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle className={styles.dialogTitle}>
@@ -164,12 +241,20 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
           <Grid item xs={12} sm={6}>
             <Autocomplete
               multiple
-              options={allCustomers.filter((c) => c.id !== initialData?.id)}
-              getOptionLabel={(option) => `${option.name} (${option.nic})`}
-              value={allCustomers.filter((c) => form.relatedCustomers.includes(c.id))}
+              options={relatedOptions}
+              loading={loadingSearch}
+              getOptionLabel={(option) => `${option.name} (${option.nicNumber || option.nic || ""})`}
+              value={selectedRelatedCustomers}
               onChange={(e, newValue) => {
                 setForm((prev) => ({ ...prev, relatedCustomers: newValue.map((v) => v.id) }));
+                setSearchOptions((prev) => {
+                  const byId = new Map(prev.map((c) => [c.id, c]));
+                  for (const c of newValue) byId.set(c.id, c);
+                  return Array.from(byId.values());
+                });
               }}
+              inputValue={searchInput}
+              onInputChange={handleSearchChange}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={(params) => (
                 <TextField {...params} label="Related Customers" placeholder="Search customer..." size="small" />

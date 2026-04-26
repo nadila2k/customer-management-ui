@@ -46,3 +46,8 @@ export const uploadBulkCustomers = async (file) => {
     },
   });
 };
+
+export const searchCustomers = async (keyword) => {
+  const q = encodeURIComponent(keyword ?? "");
+  return await get(`/customers/search?keyword=${q}`);
+};
