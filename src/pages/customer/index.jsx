@@ -29,7 +29,7 @@ function CustomerListPage() {
           nic: c.nicNumber,
           dob: c.dateOfBirth,
           phones: c.phoneNumbers && c.phoneNumbers.length > 0 ? c.phoneNumbers : [{ mobileNumber: "" }],
-          addresses: c.addresses && c.addresses.length > 0 ? c.addresses : [{ addressLine1: "", addressLine2: "", cityName: "", countryName: "" }],
+          addresses: c.addresses && c.addresses.length > 0 ? c.addresses : [{ addressLine1: "", addressLine2: "", cityName: "" }],
           relatedCustomers: c.familyMemberIds || []
         }));
 

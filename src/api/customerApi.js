@@ -14,7 +14,7 @@ export const createCustomer = async (customerData) => {
     dateOfBirth: customerData.dob,
     nicNumber: customerData.nic,
     phones: customerData.phones && customerData.phones.length > 0 ? customerData.phones : [{ mobileNumber: "" }],
-    addresses: customerData.addresses && customerData.addresses.length > 0 ? customerData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "", countryName: "" }],
+    addresses: customerData.addresses && customerData.addresses.length > 0 ? customerData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "" }],
     familyMemberIds: customerData.relatedCustomers || [],
   };
 
@@ -27,7 +27,7 @@ export const updateCustomer = async (id, customerData) => {
     dateOfBirth: customerData.dob,
     nicNumber: customerData.nic,
     phones: customerData.phones && customerData.phones.length > 0 ? customerData.phones : [{ mobileNumber: "" }],
-    addresses: customerData.addresses && customerData.addresses.length > 0 ? customerData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "", countryName: "" }],
+    addresses: customerData.addresses && customerData.addresses.length > 0 ? customerData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "" }],
     familyMemberIds: customerData.relatedCustomers || [],
   };
 

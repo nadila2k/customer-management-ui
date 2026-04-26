@@ -16,7 +16,7 @@ import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import styles from "./CustomerFormDialog.module.css";
 
-const EMPTY = { name: "", nic: "", dob: "", phones: [{ mobileNumber: "" }], addresses: [{ addressLine1: "", addressLine2: "", cityName: "", countryName: "" }], relatedCustomers: [] };
+const EMPTY = { name: "", nic: "", dob: "", phones: [{ mobileNumber: "" }], addresses: [{ addressLine1: "", addressLine2: "", cityName: "" }], relatedCustomers: [] };
 
 function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers = [] }) {
   const [form, setForm] = useState(EMPTY);
@@ -31,7 +31,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
         nic: initialData.nic, 
         dob: initialData.dob || "",
         phones: initialData.phones && initialData.phones.length > 0 ? initialData.phones : [{ mobileNumber: "" }],
-        addresses: initialData.addresses && initialData.addresses.length > 0 ? initialData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "", countryName: "" }],
+        addresses: initialData.addresses && initialData.addresses.length > 0 ? initialData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "" }],
         relatedCustomers: initialData.relatedCustomers || []
       } : EMPTY);
       setErrors({});
@@ -66,7 +66,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
   }
 
   function addAddress() {
-    setForm((prev) => ({ ...prev, addresses: [...prev.addresses, { addressLine1: "", addressLine2: "", cityName: "", countryName: "" }] }));
+    setForm((prev) => ({ ...prev, addresses: [...prev.addresses, { addressLine1: "", addressLine2: "", cityName: "" }] }));
   }
 
   function removeAddress(index) {
@@ -256,15 +256,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
                   size="small"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Country"
-                  value={address.countryName}
-                  onChange={(e) => handleAddressChange(index, "countryName", e.target.value)}
-                  fullWidth
-                  size="small"
-                />
-              </Grid>
+
             </Grid>
           </Box>
         ))}
