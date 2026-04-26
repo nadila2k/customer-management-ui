@@ -17,7 +17,7 @@ function CustomerListPage() {
   const loadCustomers = async () => {
     try {
       setLoading(true);
-      const response = await fetchCustomersPaginated(page, rowsPerPage);
+      const response = await fetchCustomersPaginated(page, rowsPerPage, "createdAt", "desc");
       if (response && response.data) {
         // Server side paginated response expects response.data.content
         const items = response.data.content || [];

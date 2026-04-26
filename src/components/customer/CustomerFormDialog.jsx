@@ -11,7 +11,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Autocomplete from "@mui/material/Autocomplete";
-import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import styles from "./CustomerFormDialog.module.css";
@@ -213,8 +212,15 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
       </DialogTitle>
 
       <DialogContent className={styles.dialogContent}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+            gap: 2,
+            alignItems: "start",
+          }}
+        >
+          <Box>
             <TextField
               label="Full Name"
               name="name"
@@ -227,8 +233,8 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               autoFocus
               disabled={isView}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          </Box>
+          <Box>
             <TextField
               label="NIC Number"
               name="nic"
@@ -241,8 +247,8 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               placeholder="123456789V"
               disabled={isView}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          </Box>
+          <Box>
             <TextField
               label="Date of Birth"
               name="dob"
@@ -253,11 +259,11 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               helperText={errors.dob}
               fullWidth
               size="small"
-              InputLabelProps={{ shrink: true }}
+              slotProps={{ inputLabel: { shrink: true } }}
               disabled={isView}
             />
-          </Grid>
-          <Grid item xs={12}>
+          </Box>
+          <Box sx={{ gridColumn: { xs: "1 / -1", sm: "1 / -1" } }}>
             <Autocomplete
               multiple
               options={relatedOptions}
@@ -275,18 +281,18 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               inputValue={searchInput}
               onInputChange={handleSearchChange}
               isOptionEqualToValue={(option, value) => option.id === value.id}
-              sx={{ width: 500 }}
+              sx={{ width: { xs: "100%", sm: 500 } }}
               disabled={isView}
               renderInput={(params) => (
                 <TextField {...params} label="Related Customers" placeholder="Search customer..." size="small" />
               )}
             />
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
 
         <Divider sx={{ my: 2 }} />
         
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} sx={{display: "flex", alignItems: "center"}}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
           <Typography variant="subtitle1" fontWeight="bold">Phone Numbers</Typography>
           {!isView && (
             <IconButton onClick={addPhone} color="primary" size="small">
@@ -296,10 +302,10 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
         </Box>
         
         {form.phones.map((phone, index) => (
-          <Box key={index} display="flex" alignItems="center" gap={2} mb={2} >
+          <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
             <TextField
               label={`Mobile Number ${index + 1}`}
-              value={phone.mobileNumber}
+              value={phone.mobileNumber ?? ""}
               onChange={(e) => handlePhoneChange(index, e.target.value)}
               error={Boolean(errors[`phones.${index}.mobileNumber`])}
               helperText={errors[`phones.${index}.mobileNumber`] || ""}
@@ -318,7 +324,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
 
         <Divider sx={{ my: 2 }} />
 
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} sx={{display: "flex", alignItems: "center"}}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
           <Typography variant="subtitle1" fontWeight="bold">Addresses</Typography>
           {!isView && (
             <IconButton onClick={addAddress} color="primary" size="small">
@@ -328,8 +334,17 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
         </Box>
 
         {form.addresses.map((address, index) => (
-          <Box key={index} p={2} mb={4} border={1} borderColor="grey.300" borderRadius={2}>
-            <Box display="flex" alignItems="center" justifyContent="space-between" mb={2} sx={{display: "flex", alignItems: "center", mb: 2}}>
+          <Box
+            key={index}
+            sx={{
+              p: 2,
+              mb: 4,
+              border: 1,
+              borderColor: "grey.300",
+              borderRadius: 2,
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
               <Typography variant="subtitle2">Address {index + 1}</Typography>
               {!isView && (
                 <IconButton onClick={() => removeAddress(index)} color="error" size="small">
@@ -338,10 +353,10 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               )}
             </Box>
 
-            <Box display="flex" alignItems="flex-start" gap={2} flexWrap="wrap" sx={{display: "flex", gap: 2}}>
+            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2, flexWrap: "wrap" }}>
               <TextField
                 label="Address Line 1"
-                value={address.addressLine1}
+                value={address.addressLine1 ?? ""}
                 onChange={(e) => handleAddressChange(index, "addressLine1", e.target.value)}
                 error={Boolean(errors[`addresses.${index}.addressLine1`])}
                 helperText={errors[`addresses.${index}.addressLine1`] || ""}
@@ -351,7 +366,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               />
               <TextField
                 label="Address Line 2"
-                value={address.addressLine2}
+                value={address.addressLine2 ?? ""}
                 onChange={(e) => handleAddressChange(index, "addressLine2", e.target.value)}
                 error={Boolean(errors[`addresses.${index}.addressLine2`])}
                 helperText={errors[`addresses.${index}.addressLine2`] || ""}
@@ -361,7 +376,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
               />
               <TextField
                 label="City"
-                value={address.cityName}
+                value={address.cityName ?? ""}
                 onChange={(e) => handleAddressChange(index, "cityName", e.target.value)}
                 error={Boolean(errors[`addresses.${index}.cityName`])}
                 helperText={errors[`addresses.${index}.cityName`] || ""}

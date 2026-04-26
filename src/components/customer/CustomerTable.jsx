@@ -182,12 +182,14 @@ function CustomerTable({
             setSearch(e.target.value);
             if (onPageChange) onPageChange(0);
           }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
+                </InputAdornment>
+              ),
+            },
           }}
         />
       </div>
