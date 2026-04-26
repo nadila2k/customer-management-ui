@@ -11,11 +11,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import Autocomplete from "@mui/material/Autocomplete";
 import styles from "./CustomerFormDialog.module.css";
 
-const EMPTY = { name: "", nic: "", dob: "", addressLine1: "", addressLine2: "", city: "", country: "", relatedCustomers: [] };
+const EMPTY = { name: "", nic: "", dob: "", mobileNumber: "", addressLine1: "", addressLine2: "", city: "", country: "", relatedCustomers: [] };
 
 function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers = [] }) {
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
   const isEdit = Boolean(initialData);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
         name: initialData.name, 
         nic: initialData.nic, 
         dob: initialData.dob || "",
+        mobileNumber: initialData.mobileNumber || "",
         addressLine1: initialData.addressLine1 || "",
         addressLine2: initialData.addressLine2 || "",
         city: initialData.city || "",
@@ -50,13 +52,30 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
     return newErrors;
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const validation = validate();
     if (Object.keys(validation).length > 0) {
       setErrors(validation);
       return;
     }
-    onSubmit(form);
+    
+    setSubmitting(true);
+    const result = await onSubmit(form);
+    setSubmitting(false);
+
+    if (result && result.error) {
+      const serverErr = result.error;
+      if (serverErr.data) {
+        const newErrors = {};
+        if (serverErr.data.nicNumber) newErrors.nic = serverErr.data.nicNumber;
+        if (serverErr.data.dateOfBirth) newErrors.dob = serverErr.data.dateOfBirth;
+        if (serverErr.data.name) newErrors.name = serverErr.data.name;
+        if (serverErr.data.mobileNumber || serverErr.data['phones[0].mobileNumber']) {
+          newErrors.mobileNumber = serverErr.data.mobileNumber || serverErr.data['phones[0].mobileNumber'];
+        }
+        setErrors(newErrors);
+      }
+    }
   }
 
   return (
@@ -101,6 +120,16 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
           onChange={handleChange}
           error={Boolean(errors.dob)}
           helperText={errors.dob}
+          fullWidth
+          size="small"
+        />
+        <TextField
+          label="Mobile Number"
+          name="mobileNumber"
+          value={form.mobileNumber}
+          onChange={handleChange}
+          error={Boolean(errors.mobileNumber)}
+          helperText={errors.mobileNumber || "e.g. +94771234567"}
           fullWidth
           size="small"
         />
@@ -153,11 +182,11 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
       </DialogContent>
 
       <DialogActions className={styles.dialogActions}>
-        <Button variant="outlined" onClick={onClose} className={styles.cancelBtn}>
+        <Button variant="outlined" onClick={onClose} className={styles.cancelBtn} disabled={submitting}>
           Cancel
         </Button>
-        <Button variant="contained" onClick={handleSubmit} className={styles.submitBtn}>
-          {isEdit ? "Save Changes" : "Create"}
+        <Button variant="contained" onClick={handleSubmit} className={styles.submitBtn} disabled={submitting}>
+          {submitting ? "Saving..." : (isEdit ? "Save Changes" : "Create")}
         </Button>
       </DialogActions>
     </Dialog>

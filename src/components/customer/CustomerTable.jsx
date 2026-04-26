@@ -65,13 +65,20 @@ function CustomerTable({ rows = [], onAdd, onEdit, onDelete }) {
     setEditTarget(null);
   }
 
-  function handleDialogSubmit(data) {
+  async function handleDialogSubmit(data) {
+    let result;
     if (editTarget) {
-      onEdit?.({ ...editTarget, ...data });
+      result = await onEdit?.({ ...editTarget, ...data });
     } else {
-      onAdd?.(data);
+      result = await onAdd?.(data);
     }
+    
+    if (result && result.error) {
+      return result;
+    }
+    
     handleDialogClose();
+    return { success: true };
   }
 
   return (

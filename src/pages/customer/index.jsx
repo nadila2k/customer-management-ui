@@ -1,27 +1,79 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CustomerTable from "../../components/customer/CustomerTable";
-
-const INITIAL_CUSTOMERS = [
-  { id: 1, name: "Amal Perera", nic: "199512345678", dob: "1995-05-15", addressLine1: "123 Main St", addressLine2: "Apt 4B", city: "Colombo", country: "Sri Lanka" },
-  { id: 2, name: "Nimal Silva", nic: "198876543210", dob: "1988-10-20", addressLine1: "456 Galle Rd", addressLine2: "", city: "Galle", country: "Sri Lanka" },
-  { id: 3, name: "Kamani Fernando", nic: "200023456789", dob: "2000-02-10", addressLine1: "789 Kandy Rd", addressLine2: "Suite 12", city: "Kandy", country: "Sri Lanka" },
-];
-
-let nextId = INITIAL_CUSTOMERS.length + 1;
+import { fetchCustomers, createCustomer, updateCustomer, deleteCustomer } from "../../api/customerApi";
 
 function CustomerListPage() {
-  const [customers, setCustomers] = useState(INITIAL_CUSTOMERS);
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  function handleAdd(data) {
-    setCustomers((prev) => [...prev, { id: nextId++, ...data }]);
+  useEffect(() => {
+    loadCustomers();
+  }, []);
+
+  const loadCustomers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetchCustomers();
+      if (response && response.data) {
+        // The success format looks like { status: 'SUCCESS', data: [...] }
+        // or for a list maybe just a list or an object with 'data'. Let's assume response.data contains the list if it's an object.
+        const items = Array.isArray(response.data) ? response.data : Array.isArray(response) ? response : [];
+        
+        // Map backend properties to frontend
+        const mappedItems = items.map(c => ({
+          id: c.id,
+          name: c.name,
+          nic: c.nicNumber,
+          dob: c.dateOfBirth,
+          mobileNumber: c.phoneNumbers && c.phoneNumbers.length > 0 ? c.phoneNumbers[0].mobileNumber : "",
+          addressLine1: c.addresses && c.addresses.length > 0 ? c.addresses[0].addressLine1 : "",
+          addressLine2: c.addresses && c.addresses.length > 0 ? c.addresses[0].addressLine2 : "",
+          city: c.addresses && c.addresses.length > 0 ? c.addresses[0].cityName : "",
+          country: c.addresses && c.addresses.length > 0 ? c.addresses[0].countryName : "",
+        }));
+
+        setCustomers(mappedItems);
+      }
+    } catch (error) {
+      console.error("Failed to load customers", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  async function handleAdd(data) {
+    try {
+      const response = await createCustomer(data);
+      if (response && response.status === "SUCCESS") {
+        await loadCustomers();
+        return { success: true };
+      }
+    } catch (error) {
+      console.error("Failed to create customer", error);
+      return { success: false, error: error };
+    }
   }
 
-  function handleEdit(updated) {
-    setCustomers((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+  async function handleEdit(updated) {
+    try {
+      const response = await updateCustomer(updated.id, updated);
+      if (response && response.status === "SUCCESS") {
+        await loadCustomers();
+        return { success: true };
+      }
+    } catch (error) {
+      console.error("Failed to update customer", error);
+      return { success: false, error: error };
+    }
   }
 
-  function handleDelete(id) {
-    setCustomers((prev) => prev.filter((c) => c.id !== id));
+  async function handleDelete(id) {
+    try {
+      await deleteCustomer(id);
+      await loadCustomers();
+    } catch (error) {
+      console.error("Failed to delete customer", error);
+    }
   }
 
   return (
@@ -30,6 +82,7 @@ function CustomerListPage() {
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      loading={loading}
     />
   );
 }
