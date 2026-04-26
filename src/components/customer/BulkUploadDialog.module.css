@@ -1,0 +1,84 @@
+.dialogTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 12px !important;
+}
+
+.titleText {
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  color: #1a1a2e !important;
+}
+
+.dialogContent {
+  padding: 8px 24px 20px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 400px;
+}
+
+.dialogActions {
+  padding: 12px 24px 20px !important;
+  gap: 8px;
+}
+
+.uploadArea {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 32px 16px;
+  text-align: center;
+  background-color: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.uploadArea:hover {
+  border-color: #1976d2;
+  background-color: #f0f4ff;
+}
+
+.uploadArea p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.uploadArea .fileName {
+  color: #1976d2;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.cancelBtn {
+  color: #6b7280 !important;
+  border-color: #e5e7eb !important;
+}
+
+.submitBtn {
+  background-color: #1976d2 !important;
+  color: #ffffff !important;
+  min-width: 100px !important;
+}
+
+.submitBtn:hover {
+  background-color: #1565c0 !important;
+}
+
+.submitBtn:disabled {
+  background-color: #9ca3af !important;
+  color: #f3f4f6 !important;
+}
+
+.errorText {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 8px;
+}
+
+.successText {
+  color: #16a34a;
+  font-size: 0.875rem;
+  margin-top: 8px;
+}

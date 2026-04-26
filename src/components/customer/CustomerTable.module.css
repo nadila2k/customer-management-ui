@@ -1,0 +1,143 @@
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pageTitle {
+  font-size: 1.6rem !important;
+  font-weight: 700 !important;
+  color: #1a1a2e !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.2 !important;
+}
+
+.pageSubtitle {
+  font-size: 0.875rem !important;
+  color: #6b7280 !important;
+}
+
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.createBtn {
+  background-color: #1976d2 !important;
+  color: #ffffff !important;
+  padding: 8px 20px !important;
+  font-size: 0.875rem !important;
+}
+
+.createBtn:hover {
+  background-color: #1565c0 !important;
+}
+
+.bulkBtn {
+  border-color: #1976d2 !important;
+  color: #1976d2 !important;
+  padding: 8px 20px !important;
+  font-size: 0.875rem !important;
+  border-width: 1.5px !important;
+}
+
+.bulkBtn:hover {
+  background-color: #f0f4ff !important;
+}
+
+.tableCard {
+  border-radius: 12px !important;
+  overflow: hidden;
+  border: 1px solid #e5e7eb !important;
+}
+
+.tableContainer {
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+}
+
+.tableContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.emptyRow {
+  text-align: center !important;
+  padding: 60px 20px !important;
+  color: #9ca3af !important;
+}
+
+.emptyIcon {
+  font-size: 3rem !important;
+  color: #d1d5db !important;
+  margin-bottom: 12px;
+}
+
+.emptyText {
+  font-size: 0.95rem !important;
+  color: #9ca3af !important;
+}
+
+.idCell {
+  font-family: "DM Mono", monospace !important;
+  font-size: 0.8rem !important;
+  color: #6b7280 !important;
+  background-color: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.nicCell {
+  font-family: "DM Mono", monospace !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.02em;
+}
+
+.nameCell {
+  font-weight: 500 !important;
+  color: #1a1a2e !important;
+}
+
+.actionCell {
+  display: flex;
+  gap: 4px;
+}
+
+.editBtn {
+  color: #1a1a2e !important;
+}
+
+.deleteBtn {
+  color: #e94560 !important;
+}
+
+.searchBar {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.searchInput {
+  flex: 1;
+  max-width: 360px;
+}
