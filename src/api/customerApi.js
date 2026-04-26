@@ -51,3 +51,7 @@ export const searchCustomers = async (keyword) => {
   const q = encodeURIComponent(keyword ?? "");
   return await get(`/customers/search?keyword=${q}`);
 };
+
+export const fetchCustomerById = async (id) => {
+  return await get(`/customers/${id}`);
+};

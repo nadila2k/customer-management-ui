@@ -39,9 +39,16 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
         dob: initialData.dob || "",
         phones: initialData.phones && initialData.phones.length > 0 ? initialData.phones : [{ mobileNumber: "" }],
         addresses: initialData.addresses && initialData.addresses.length > 0 ? initialData.addresses : [{ addressLine1: "", addressLine2: "", cityName: "" }],
-        relatedCustomers: initialData.relatedCustomers || []
+        relatedCustomers: initialData.familyMembers?.length
+          ? initialData.familyMembers.map((m) => m.id)
+          : (initialData.relatedCustomers || [])
       } : EMPTY);
       setErrors({});
+
+      if (initialData?.familyMembers?.length) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSearchOptions(initialData.familyMembers);
+      }
     }
   }, [open, initialData]);
 

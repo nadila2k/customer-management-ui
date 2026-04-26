@@ -22,6 +22,7 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import CustomerFormDialog from "./CustomerFormDialog";
 import BulkUploadDialog from "./BulkUploadDialog";
 import styles from "./CustomerTable.module.css";
+import { fetchCustomerById } from "../../api/customerApi";
 
 const COLUMNS = [
   { id: "id", label: "ID", width: 80 },
@@ -59,9 +60,31 @@ function CustomerTable({
     setDialogOpen(true);
   }
 
-  function handleEditClick(row) {
-    setEditTarget(row);
-    setDialogOpen(true);
+  async function handleEditClick(row) {
+    try {
+      const res = await fetchCustomerById(row.id);
+      if (res && res.status === "SUCCESS" && res.data) {
+        const c = res.data;
+        const mapped = {
+          id: c.id,
+          name: c.name,
+          nic: c.nicNumber,
+          dob: c.dateOfBirth,
+          phones: c.phoneNumbers && c.phoneNumbers.length > 0 ? c.phoneNumbers : [{ mobileNumber: "" }],
+          addresses: c.addresses && c.addresses.length > 0 ? c.addresses : [{ addressLine1: "", addressLine2: "", cityName: "" }],
+          relatedCustomers: (c.familyMembers || []).map((m) => m.id),
+          familyMembers: c.familyMembers || [],
+        };
+        setEditTarget(mapped);
+      } else {
+        setEditTarget(row);
+      }
+    } catch (e) {
+      console.error("Failed to load customer for edit", e);
+      setEditTarget(row);
+    } finally {
+      setDialogOpen(true);
+    }
   }
 
   function handleDialogClose() {
