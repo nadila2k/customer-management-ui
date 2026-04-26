@@ -19,11 +19,11 @@ function CustomerListPage() {
       setLoading(true);
       const response = await fetchCustomersPaginated(page, rowsPerPage, "createdAt", "desc");
       if (response && response.data) {
-        // Server side paginated response expects response.data.content
+      
         const items = response.data.content || [];
         setTotalElements(response.data.totalElements || 0);
         
-        // Map backend properties to frontend
+      
         const mappedItems = items.map(c => ({
           id: c.id,
           name: c.name,

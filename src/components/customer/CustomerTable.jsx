@@ -143,7 +143,7 @@ function CustomerTable({
 
   return (
     <>
-      {/* Page Header */}
+     
       <div className={styles.pageHeader}>
         <div className={styles.titleSection}>
           <Typography className={styles.pageTitle}>Customers</Typography>
@@ -171,7 +171,7 @@ function CustomerTable({
         </div>
       </div>
 
-      {/* Search Bar */}
+    
       <div className={styles.searchBar}>
         <TextField
           size="small"
@@ -194,7 +194,7 @@ function CustomerTable({
         />
       </div>
 
-      {/* Table */}
+     
       <Paper className={styles.tableCard} elevation={0}>
         <TableContainer className={styles.tableContainer}>
           <Table stickyHeader size="medium">
@@ -286,7 +286,7 @@ function CustomerTable({
         />
       </Paper>
 
-      {/* Create/Edit Dialog */}
+     
       <CustomerFormDialog
         open={dialogOpen}
         onClose={handleDialogClose}
@@ -296,7 +296,7 @@ function CustomerTable({
         readOnly={dialogMode === "view"}
       />
 
-      {/* Bulk Upload Dialog */}
+
       <BulkUploadDialog
         open={bulkUploadOpen}
         onClose={() => setBulkUploadOpen(false)}

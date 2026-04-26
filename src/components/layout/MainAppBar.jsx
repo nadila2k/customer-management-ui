@@ -9,7 +9,7 @@ function MainAppBar() {
   return (
     <AppBar position="sticky" elevation={0} className={styles.appBar}>
       <Toolbar className={styles.toolbar}>
-        {/* Logo */}
+      
         <div className={styles.logoSection}>
           <div className={styles.logoIcon}>
             <PeopleAltOutlinedIcon sx={{ color: "#fff", fontSize: 18 }} />

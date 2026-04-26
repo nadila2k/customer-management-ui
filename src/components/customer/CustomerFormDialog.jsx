@@ -33,7 +33,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
 
   useEffect(() => {
     if (open) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+     
       setForm(initialData ? { 
         name: initialData.name, 
         nic: initialData.nic, 
@@ -47,7 +47,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
       setErrors({});
 
       if (initialData?.familyMembers?.length) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+    
         setSearchOptions(initialData.familyMembers);
       }
     }
@@ -57,7 +57,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
     if (!open) return;
     const selected = allCustomers.filter((c) => form.relatedCustomers.includes(c.id));
     if (selected.length === 0) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  
     setSearchOptions((prev) => {
       const byId = new Map(prev.map((c) => [c.id, c]));
       for (const c of selected) byId.set(c.id, c);
@@ -147,14 +147,13 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
     }
   }
 
-  // Replace the handleSearchChange function:
+  
   const handleSearchChange = (event, newInputValue, reason) => {
     if (reason !== "input") return;
 
     setSearchInput(newInputValue || "");
   
-    // Don't clear existing searchOptions when input is cleared —
-    // selected items may only exist there, not in allCustomers
+  
     if (!newInputValue) return;
   
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
@@ -164,7 +163,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
       latestSearchRef.current = newInputValue;
       try {
         const res = await searchCustomers(newInputValue);
-        // Ignore out-of-order responses (fast typing)
+
         if (latestSearchRef.current !== newInputValue) return;
 
         if (res && res.status === "SUCCESS" && res.data) {
@@ -179,7 +178,7 @@ function CustomerFormDialog({ open, onClose, onSubmit, initialData, allCustomers
     }, 500);
   };
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
+ 
   const relatedOptions = useMemo(() => {
     const byId = new Map();
     const add = (c) => {

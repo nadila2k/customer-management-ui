@@ -10,7 +10,7 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // Return a structured error response
+   
     if (error.response && error.response.data) {
       return Promise.reject(error.response.data);
     }
